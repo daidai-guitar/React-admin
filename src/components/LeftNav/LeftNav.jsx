@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Link} from 'react-router-dom'
+import {Link, withRouter} from 'react-router-dom'
 import {Menu} from 'antd'
 
 
@@ -9,10 +9,12 @@ import menuList from '../../config/menuConfig'
 
 const { SubMenu } = Menu
 
-export default class LeftNav extends Component {
+class LeftNav extends Component {
 
   getMenuNodes = (menuList) => {
-    // 映射 根据一个数组返回另一中类型的数组
+    // 获取当前访问的路径
+    const path = this.props.location.pathname
+    // 映射 根据一个数组返回另一种类型的数组
     return menuList.map((item) => {  // item表示一个数组项
       if (!item.children) {   
         return (
@@ -23,6 +25,12 @@ export default class LeftNav extends Component {
           </Menu.Item>
         )
       } else {
+        const cItem = item.children.find(cItem => cItem.key===path)
+        
+        // 如果存在子菜单就打开
+        if (cItem) {
+          this.openKey = item.key
+        }
         return (
           <SubMenu icon={<item.icon />} title={item.title} key={item.key}>
             {
@@ -44,13 +52,17 @@ export default class LeftNav extends Component {
   }
   
   render() {
+
+    const path = this.props.location.pathname
+    const openKey = this.openKey
+
     return (
       <div className="left-nav">
         <Link to="/" className="left-nav-header">
           <img src={logo} alt="硅谷后台" />
           <h1>硅谷后台</h1>
         </Link>
-        <Menu defaultSelectedKeys={['/home']} defaultOpenKeys={['sub1']} mode="inline" theme="dark">
+        <Menu selectedKeys={[path]} defaultOpenKeys={[openKey]} mode="inline" theme="dark">
           {
             this.menuNodes
           }
@@ -59,3 +71,5 @@ export default class LeftNav extends Component {
     )
   }
 }
+
+export default withRouter(LeftNav)

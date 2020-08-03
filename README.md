@@ -147,15 +147,94 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/tr
 	- 定义接口请求函数的好处是当发送请求时不需要每次都指定url、param、type
 	- 值需要指定请求参数就行
 
+- jsonp请求原理
+  - 解决GET类型的Ajax请求跨域问题
+  - 本身不是Ajax请求 而是一般的GET请求
+  - 浏览器端
+    - 定义好接收响应数据的函数foo
+      - function foo(err, data) {
+          console.log('Your public IP address is' + data.ip, err)
+        }
+    - 动态生成<script>标签来请求后台的接口(src就是接口的url)
+      - function createScriptTag(src) {
+          // 创建script元素
+          const script = document.createElement('script')
+          // 设置类型
+          script.setAttribute('type', 'text/javascript')
+          // 添加属性 发送请求 加载js代码
+          script.src = src
+          // 动态添加到文档中
+          document.body.appendChild(script)
+        }
+  - 服务器端
+    - 接收到请求后处理请求并产生结果数据 返回函数调用(传过去的回调函数)的js代码
+    - 并将结果数据作为实参传入函数调用
+    - foo(err, data)
+  - 浏览器端
+    - 收到响应自动执行函数调用的js代码(执行提前定义好的回调函数 获得响应数据)
+    - window.onload = function() {
+        // 页面加载完毕之后动态创建script标签
+        createScriptTag('http://example.com/ip?callback=foo')
+        const result = foo(err, data)
+      }
+
 ### 维持登录与自动登录
 	- 使用localStorage实现数据的本地缓存
 	- 或者使用store这个第三方库实现
 
-## 注意点
+### 注意点
 	- 当使用export default默认暴露时 导入模块时名字自己取
 	- 一般来说取文件名
+	- componentWillMount() {}
+		- 组件将要渲染前调用
+		- 只调用一次
 
-## 动态配置菜单项
+  - 三角形的布局
+    - 给一个盒子的上下左右都设置相同大小的边框
+
+	- 数组的find方法返回一个条件符合的元素
+
+	- React事件回调函数的参数问题
+		- 在定义事件回调函数时不能直接传递参数
+		- 解决: 在事件回调函数外面再包一层函数 在外层函数里面调用事件回调函数
+
+	- this.setState()
+		- 一旦状态更新就会重新渲染组件
+		- 函数形式
+			- this.setState(updater, [callback])
+			-	updater为返回stateChange的函数 (state, props) => stateChange
+			-	接收的state和props保证为最新值
+		- 对象形式(函数形式的简写)
+			- this.setState(stateChange, [callback])
+			- stateChange为对象
+			- callback为回调函数(可选)	在状态更新且界面更新后调用(重新渲染之后调用)
+		- this.setState()更新状态时同步还是异步?
+			- 在React中相关回调中	异步	生命周期钩子/React事件监听
+				- 状态更新的优先级高于定时器等异步任务
+				- 在一次回调中多次更新状态的操作
+					- 函数形式	render一次状态更新多次(不合并)
+					- 对象形式	render一次状态更新一次(合并)
+					- 函函模式	不合并
+					- 对函模式	不合并
+					- 函对模式	合并
+			- 在其他异步回调中		同步	定时器/Promise/原生事件...... 
+			- 与函数形式和对象形式无关
+		- 总结
+			- 在状态不依赖之前的状态时使用对象语法
+			- 在状态依赖之前的状态时使用函数语法
+
+### 动态配置菜单项
 	- 将数据抽离
 	- 将数据显示
 	- 使用map || reduce	之一实现数据展现
+
+### 非路由组件转换为路由组件
+	- withRouter(Component)
+	- 高阶组件(高阶函数) 传入一个组件返回一个新组件
+
+### 一点less语法
+  - &表示当前元素
+    - .header-top {
+        &::after
+    - }
+

@@ -1,3 +1,48 @@
 .header {
   height: 80px;
+  background-color: #fff;
+  .header-top {
+    padding-right: 30px;
+    height: 40px;
+    line-height: 40px;
+    text-align: right;
+    border-bottom: 1px solid #1da57a;
+    span {
+      margin-right: 10px;
+    }
+  }
+
+  .header-body {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    .header-body-left {
+      position: relative;
+      width: 25%;
+      font-size: 20px;
+      text-align: center;
+      &::after {
+        content: '';
+        position: absolute;
+        right: 50%;
+        top: 100%;
+        transform: translateX(50%);
+        // transparent表示透明
+        border-top: 20px solid #fff;
+        border-right: 20px solid transparent;
+        border-bottom: 20px solid transparent;
+        border-left: 20px solid transparent;
+      }
+    }
+    .header-body-right {
+      margin-right: 30px;
+      text-align: right;      
+      width: 75%;
+      img {
+        margin: 0 15px;
+        width: 30px;
+        height: 20px;
+      }
+    }
+  }
 }
